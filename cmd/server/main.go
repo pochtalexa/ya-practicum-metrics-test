@@ -62,8 +62,7 @@ func restoreMetrics() error {
 func run() error {
 
 	mux := chi.NewRouter()
-	mux.Use(middlefunc.GzipDecompression)
-	mux.Use(middleware.Logger)
+	mux.Use(middleware.Logger, middlefunc.GzipDecompression, middleware.Compress(5))
 
 	// return all metrics on WEB page
 	mux.Get("/", handlers.RootHandler)
