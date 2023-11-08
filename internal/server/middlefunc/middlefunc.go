@@ -15,9 +15,9 @@ import (
 )
 
 // проверяем, что клиент готов принимать gzip данные
-func getReqEncoding(r *http.Request, encoding string) bool {
+func checkGzipEncoding(r *http.Request) bool {
 
-	encodingSlice := r.Header.Values(encoding)
+	encodingSlice := r.Header.Values("Content-Encoding")
 	encodingsStr := strings.Join(encodingSlice, ",")
 	encodings := strings.Split(encodingsStr, ",")
 
@@ -35,7 +35,7 @@ func getReqEncoding(r *http.Request, encoding string) bool {
 func GzipDecompression(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		if getReqEncoding(r, "Accept-Encoding") {
+		if checkGzipEncoding(r) {
 			gzipReader, err := gzip.NewReader(r.Body)
 			if err != nil {
 				w.Header().Set("Content-Type", "application/json")
