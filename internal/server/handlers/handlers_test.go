@@ -212,7 +212,7 @@ func TestGzipCompression3(t *testing.T) {
 	mux := chi.NewRouter()
 	mux.Use(middleware.Logger)
 	mux.Use(middlefunc.GzipDecompression)
-	mux.Use(middleware.Compress(5, "gzip"))
+	mux.Use(middleware.Compress(5, "application/json"))
 
 	mux.Post("/update/", UpdateHandler)
 
