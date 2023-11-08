@@ -7,6 +7,7 @@ import (
 	"errors"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/pochtalexa/ya-practicum-metrics/internal/server/middlefunc"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -210,6 +211,8 @@ func TestGzipCompression3(t *testing.T) {
 
 	mux := chi.NewRouter()
 	mux.Use(middleware.Logger)
+	mux.Use(middlefunc.GzipDecompression)
+	mux.Use(middleware.Compress(5, "gzip"))
 
 	mux.Post("/update/", UpdateHandler)
 

@@ -63,8 +63,8 @@ func run() error {
 
 	mux := chi.NewRouter()
 	mux.Use(middleware.Logger)
-	//mux.Use(middlefunc.GzipDecompression)
-	mux.Use(middleware.Compress(5))
+	mux.Use(middlefunc.GzipDecompression)
+	mux.Use(middleware.Compress(5, "gzip"))
 
 	// return all metrics on WEB page
 	mux.Get("/", handlers.RootHandler)

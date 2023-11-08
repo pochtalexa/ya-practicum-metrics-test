@@ -2,6 +2,7 @@ package middlefunc
 
 import (
 	"bytes"
+	"compress/gzip"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -32,18 +33,18 @@ func getReqContEncoding(r *http.Request) bool {
 
 func GzipDecompression(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//contentEncoding := r.Header.Get("Content-Encoding")
-		//sendsGzip := strings.Contains(contentEncoding, "gzip")
-		//
-		//if sendsGzip {
-		//	gzipReader, err := gzip.NewReader(r.Body)
-		//	if err != nil {
-		//		w.Header().Set("Content-Type", "application/json")
-		//		w.WriteHeader(http.StatusBadRequest)
-		//		return
-		//	}
-		//	r.Body = gzipReader
-		//}
+		contentEncoding := r.Header.Get("Content-Encoding")
+		sendsGzip := strings.Contains(contentEncoding, "gzip")
+
+		if sendsGzip {
+			gzipReader, err := gzip.NewReader(r.Body)
+			if err != nil {
+				w.Header().Set("Content-Type", "application/json")
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			r.Body = gzipReader
+		}
 
 		//w.Header().Set("Content-Type", http.DetectContentType(yourBody))
 		if getReqContEncoding(r) {
