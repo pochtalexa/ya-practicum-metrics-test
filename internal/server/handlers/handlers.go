@@ -1,14 +1,12 @@
 package handlers
 
 import (
-	"compress/gzip"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/pochtalexa/ya-practicum-metrics/internal/server/models"
 	"github.com/rs/zerolog/log"
-	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -20,9 +18,8 @@ import (
 
 // структура для хранения сведений об ответе
 type responseData struct {
-	status       int
-	contEncoding string
-	size         int
+	status int
+	size   int
 }
 
 func GetStore() storage.Storer {
@@ -34,66 +31,51 @@ func GetStore() storage.Storer {
 }
 
 // проверяем, что клиент отправил серверу сжатые данные в формате gzip
-func reqCheckGzipBody(r *http.Request) (io.ReadCloser, error) {
-	contentEncoding := r.Header.Get("Content-Encoding")
-	sendsGzip := strings.Contains(contentEncoding, "gzip")
-
-	if sendsGzip {
-		gzr, err := gzip.NewReader(r.Body)
-		if err != nil {
-			return r.Body, err
-		}
-		defer gzr.Close()
-		// добавляем к телу запроса обертку gzip
-		r.Body = gzr
-	}
-
-	return r.Body, nil
-}
+//func reqCheckGzipBody(r *http.Request) (io.ReadCloser, error) {
+//	contentEncoding := r.Header.Get("Content-Encoding")
+//	sendsGzip := strings.Contains(contentEncoding, "gzip")
+//
+//	if sendsGzip {
+//		gzr, err := gzip.NewReader(r.Body)
+//		if err != nil {
+//			return r.Body, err
+//		}
+//		defer gzr.Close()
+//		// добавляем к телу запроса обертку gzip
+//		r.Body = gzr
+//	}
+//
+//	return r.Body, nil
+//}
 
 // добавляем кастомную реализацию http.ResponseWriter
-type loggingGzipResponseWriter struct {
+type loggingResponseWriter struct {
 	// встраиваем оригинальный http.ResponseWriter
 	http.ResponseWriter
 	responseData *responseData
-	resCompress  bool // требуется ли сжимать ответ
 }
 
-func (r *loggingGzipResponseWriter) Write(b []byte) (int, error) {
+func (r *loggingResponseWriter) Write(b []byte) (int, error) {
 	var (
 		size int
 		err  error
-		gzw  *gzip.Writer
 	)
 
-	if r.resCompress {
-		gzw, err = gzip.NewWriterLevel(r.ResponseWriter, gzip.BestSpeed)
-		if err != nil {
-			return -1, err
-		}
-		defer gzw.Close()
-
-		r.responseData.contEncoding = "gzip" // сохраняем значение contEncoding
-
-		size, err = gzw.Write(b)
-
-	} else {
-		// записываем ответ, используя оригинальный http.ResponseWriter
-		size, err = r.ResponseWriter.Write(b)
-	}
+	// записываем ответ, используя оригинальный http.ResponseWriter
+	size, err = r.ResponseWriter.Write(b)
 
 	r.responseData.size += size // захватываем размер
 
 	return size, err
 }
 
-func (r *loggingGzipResponseWriter) WriteHeaderStatus(statusCode int) {
+func (r *loggingResponseWriter) WriteHeaderStatus(statusCode int) {
 	// записываем код статуса, используя оригинальный http.ResponseWriter
 	r.ResponseWriter.WriteHeader(statusCode)
 	r.responseData.status = statusCode // захватываем код статуса
 }
 
-func logHTTPResult(start time.Time, lw loggingGzipResponseWriter, r http.Request,
+func logHTTPResult(start time.Time, lw loggingResponseWriter, r http.Request,
 	Req []models.Metrics,
 	Res []models.Metrics,
 	optErr ...error) {
@@ -143,20 +125,20 @@ func UpdateMetric(reqJSON models.Metrics, repo storage.Storer) error {
 }
 
 // проверяем, что клиент готов принимать gzip данные
-func getReqContEncoding(r *http.Request) bool {
-
-	encodingSlice := r.Header.Values("Accept-Encoding")
-	encodingsStr := strings.Join(encodingSlice, ",")
-	encodings := strings.Split(encodingsStr, ",")
-
-	for _, el := range encodings {
-		if el == "gzip" {
-			return true
-		}
-	}
-
-	return false
-}
+//func getReqContEncoding(r *http.Request) bool {
+//
+//	encodingSlice := r.Header.Values("Accept-Encoding")
+//	encodingsStr := strings.Join(encodingSlice, ",")
+//	encodings := strings.Split(encodingsStr, ",")
+//
+//	for _, el := range encodings {
+//		if el == "gzip" {
+//			return true
+//		}
+//	}
+//
+//	return false
+//}
 
 func UpdateHandlerLong(w http.ResponseWriter, r *http.Request) {
 	var (
@@ -172,10 +154,9 @@ func UpdateHandlerLong(w http.ResponseWriter, r *http.Request) {
 		status: 0,
 		size:   0,
 	}
-	lw := loggingGzipResponseWriter{
+	lw := loggingResponseWriter{
 		ResponseWriter: w, // встраиваем оригинальный http.ResponseWriter
 		responseData:   responseData,
-		resCompress:    false,
 	}
 
 	reqJSON.ID = chi.URLParam(r, "metricName")
@@ -265,15 +246,14 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		status: 0,
 		size:   0,
 	}
-	lw := loggingGzipResponseWriter{
+	lw := loggingResponseWriter{
 		ResponseWriter: w, // встраиваем оригинальный http.ResponseWriter
 		responseData:   responseData,
-		resCompress:    false,
 	}
 
-	if lw.resCompress = getReqContEncoding(r); lw.resCompress {
-		lw.Header().Set("Content-Encoding", "gzip")
-	}
+	//if lw.resCompress = getReqContEncoding(r); lw.resCompress {
+	//	lw.Header().Set("Content-Encoding", "gzip")
+	//}
 
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqJSON); err != nil {
@@ -353,15 +333,14 @@ func UpdatesHandler(w http.ResponseWriter, r *http.Request) {
 		status: 0,
 		size:   0,
 	}
-	lw := loggingGzipResponseWriter{
+	lw := loggingResponseWriter{
 		ResponseWriter: w, // встраиваем оригинальный http.ResponseWriter
 		responseData:   responseData,
-		resCompress:    false,
 	}
 
-	if lw.resCompress = getReqContEncoding(r); lw.resCompress {
-		lw.Header().Set("Content-Encoding", "gzip")
-	}
+	//if lw.resCompress = getReqContEncoding(r); lw.resCompress {
+	//	lw.Header().Set("Content-Encoding", "gzip")
+	//}
 
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqJSON); err != nil {
@@ -431,10 +410,9 @@ func ValueHandlerLong(w http.ResponseWriter, r *http.Request) {
 		status: 0,
 		size:   0,
 	}
-	lw := loggingGzipResponseWriter{
+	lw := loggingResponseWriter{
 		ResponseWriter: w, // встраиваем оригинальный http.ResponseWriter
 		responseData:   responseData,
-		resCompress:    false,
 	}
 
 	reqJSON.ID = chi.URLParam(r, "metricName")
@@ -483,26 +461,24 @@ func ValueHandler(w http.ResponseWriter, r *http.Request) {
 	repo := GetStore()
 
 	responseData := &responseData{
-		status:       0,
-		contEncoding: "",
-		size:         0,
+		status: 0,
+		size:   0,
 	}
-	lw := loggingGzipResponseWriter{
+	lw := loggingResponseWriter{
 		ResponseWriter: w, // встраиваем оригинальный http.ResponseWriter
 		responseData:   responseData,
-		resCompress:    false,
 	}
 
-	r.Body, err = reqCheckGzipBody(r)
-	if err != nil {
-		lw.WriteHeaderStatus(http.StatusInternalServerError)
-		logHTTPResult(start, lw, *r, []models.Metrics{reqJSON}, []models.Metrics{resJSON}, err)
-		return
-	}
+	//r.Body, err = reqCheckGzipBody(r)
+	//if err != nil {
+	//	lw.WriteHeaderStatus(http.StatusInternalServerError)
+	//	logHTTPResult(start, lw, *r, []models.Metrics{reqJSON}, []models.Metrics{resJSON}, err)
+	//	return
+	//}
 
-	if lw.resCompress = getReqContEncoding(r); lw.resCompress {
-		lw.Header().Set("Content-Encoding", "gzip")
-	}
+	//if lw.resCompress = getReqContEncoding(r); lw.resCompress {
+	//	lw.Header().Set("Content-Encoding", "gzip")
+	//}
 
 	dec := json.NewDecoder(r.Body)
 	if err = dec.Decode(&reqJSON); err != nil {
@@ -558,19 +534,17 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	repo := GetStore()
 
 	responseData := &responseData{
-		status:       0,
-		contEncoding: "",
-		size:         0,
+		status: 0,
+		size:   0,
 	}
-	lw := loggingGzipResponseWriter{
+	lw := loggingResponseWriter{
 		ResponseWriter: w, // встраиваем оригинальный http.ResponseWriter
 		responseData:   responseData,
-		resCompress:    false,
 	}
 
-	if lw.resCompress = getReqContEncoding(r); lw.resCompress {
-		lw.Header().Set("Content-Encoding", "gzip")
-	}
+	//if lw.resCompress = getReqContEncoding(r); lw.resCompress {
+	//	lw.Header().Set("Content-Encoding", "gzip")
+	//}
 
 	lw.Header().Set("Content-Type", "text/html")
 	lw.Header().Set("Date", time.Now().String())
@@ -613,14 +587,12 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
 	responseData := &responseData{
-		status:       0,
-		contEncoding: "",
-		size:         0,
+		status: 0,
+		size:   0,
 	}
-	lw := loggingGzipResponseWriter{
+	lw := loggingResponseWriter{
 		ResponseWriter: w, // встраиваем оригинальный http.ResponseWriter
 		responseData:   responseData,
-		resCompress:    false,
 	}
 
 	err := storage.PingDB(db)
