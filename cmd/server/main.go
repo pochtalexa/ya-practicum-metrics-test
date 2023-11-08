@@ -86,12 +86,12 @@ func run() error {
 
 	mux := chi.NewRouter()
 	mux.Use(middleware.RequestID)
-	mux.Use(httplog.RequestLogger(logger))
 	mux.Use(middleware.Logger)
 	mux.Use(middleware.Recoverer)
+	mux.Use(middleware.URLFormat)
+	mux.Use(httplog.RequestLogger(logger))
 	mux.Use(middlefunc.GzipDecompression)
 	mux.Use(middleware.Compress(flate.DefaultCompression, "application/json", "text/html"))
-	mux.Use(middleware.URLFormat)
 
 	// return all metrics on WEB page
 	mux.Get("/", handlers.RootHandler)

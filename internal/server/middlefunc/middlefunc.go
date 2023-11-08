@@ -81,14 +81,21 @@ func CheckReqBodySign(next http.Handler) http.Handler {
 		if flags.UseHashKey {
 			if checkResult, err := checkSign(r); err != nil {
 				log.Info().Err(err).Msg("CheckReqBodySign error")
+
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
+				io.Copy(w, r.Body)
 
 				return
 			} else if !checkResult {
 				log.Info().Err(err).Msg("CheckReqBodySign checkResult error")
+
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
+
+				body, _ := io.ReadAll(r.Body)
+				w.Write(body)
+				//io.Copy(w, r.Body)
 
 				return
 			}
