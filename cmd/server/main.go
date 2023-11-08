@@ -66,7 +66,7 @@ func run() error {
 	mux.Use(middleware.Logger)
 	mux.Use(middleware.Recoverer)
 	mux.Use(middlefunc.GzipDecompression)
-	mux.Use(middleware.Compress(flate.DefaultCompression, "application/json"))
+	mux.Use(middleware.Compress(flate.DefaultCompression, "application/json", "text/html"))
 
 	// return all metrics on WEB page
 	mux.Get("/", handlers.RootHandler)
