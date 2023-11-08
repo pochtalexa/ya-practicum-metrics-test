@@ -14,14 +14,14 @@ import (
 	"strings"
 )
 
-// проверяем, что клиент готов принимать gzip данные
+// проверяем, что клиент отправил серверу сжатые данные в формате gzip
 func checkGzipEncoding(r *http.Request) bool {
 
 	encodingSlice := r.Header.Values("Content-Encoding")
 	encodingsStr := strings.Join(encodingSlice, ",")
 	encodings := strings.Split(encodingsStr, ",")
 
-	log.Info().Str("encodingsStr", encodingsStr).Msg("getReqContEncoding")
+	log.Info().Str("encodingsStr", encodingsStr).Msg("checkGzipEncoding")
 
 	for _, el := range encodings {
 		if el == "gzip" {
@@ -45,6 +45,11 @@ func GzipDecompression(next http.Handler) http.Handler {
 			r.Body = gzipReader
 			defer gzipReader.Close()
 		}
+
+		//if handlers.CheckReqContEncoding(r) {
+		//	gzipWriter := gzip.NewWriter(w)
+		//	w = gzipWriter
+		//}
 
 		log.Info().Msg("GzipDecompression passed")
 

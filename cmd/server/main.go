@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compress/flate"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -65,7 +66,7 @@ func run() error {
 	mux.Use(middleware.Logger)
 	mux.Use(middleware.Recoverer)
 	mux.Use(middlefunc.GzipDecompression)
-	mux.Use(middleware.Compress(5, "gzip"))
+	mux.Use(middleware.Compress(flate.DefaultCompression, "application/json"))
 
 	// return all metrics on WEB page
 	mux.Get("/", handlers.RootHandler)
@@ -88,11 +89,11 @@ func run() error {
 	})
 
 	mux.Get("/value/{metricType}/{metricName}", handlers.ValueHandlerLong)
-	//mux.Post("/value/", handlers.ValueHandler)
-	mux.Route("/value", func(r chi.Router) {
-		r.Use(middlefunc.CheckReqBodySign)
-		r.Post("/", handlers.ValueHandler)
-	})
+	mux.Post("/value/", handlers.ValueHandler)
+	//mux.Route("/value", func(r chi.Router) {
+	//	r.Use(middlefunc.CheckReqBodySign)
+	//	r.Post("/", handlers.ValueHandler)
+	//})
 
 	log.Info().Str("Running on", flags.FlagRunAddr).Msg("Server started")
 	defer log.Info().Msg("Server stopped")

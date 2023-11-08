@@ -30,24 +30,6 @@ func GetStore() storage.Storer {
 	}
 }
 
-// проверяем, что клиент отправил серверу сжатые данные в формате gzip
-//func reqCheckGzipBody(r *http.Request) (io.ReadCloser, error) {
-//	contentEncoding := r.Header.Get("Content-Encoding")
-//	sendsGzip := strings.Contains(contentEncoding, "gzip")
-//
-//	if sendsGzip {
-//		gzr, err := gzip.NewReader(r.Body)
-//		if err != nil {
-//			return r.Body, err
-//		}
-//		defer gzr.Close()
-//		// добавляем к телу запроса обертку gzip
-//		r.Body = gzr
-//	}
-//
-//	return r.Body, nil
-//}
-
 // добавляем кастомную реализацию http.ResponseWriter
 type loggingResponseWriter struct {
 	// встраиваем оригинальный http.ResponseWriter
@@ -125,11 +107,13 @@ func UpdateMetric(reqJSON models.Metrics, repo storage.Storer) error {
 }
 
 // проверяем, что клиент готов принимать gzip данные
-func getReqContEncoding(r *http.Request) bool {
+func checkReqContEncoding(r *http.Request) bool {
 
 	encodingSlice := r.Header.Values("Accept-Encoding")
 	encodingsStr := strings.Join(encodingSlice, ",")
 	encodings := strings.Split(encodingsStr, ",")
+
+	log.Info().Str("encodingsStr", encodingsStr).Msg("checkReqContEncoding")
 
 	for _, el := range encodings {
 		if el == "gzip" {
@@ -251,9 +235,9 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		responseData:   responseData,
 	}
 
-	if getReqContEncoding(r) {
-		lw.Header().Set("Content-Encoding", "gzip")
-	}
+	//if checkReqContEncoding(r) {
+	//	lw.Header().Set("Content-Encoding", "gzip")
+	//}
 
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqJSON); err != nil {
@@ -338,9 +322,9 @@ func UpdatesHandler(w http.ResponseWriter, r *http.Request) {
 		responseData:   responseData,
 	}
 
-	if getReqContEncoding(r) {
-		lw.Header().Set("Content-Encoding", "gzip")
-	}
+	//if checkReqContEncoding(r) {
+	//	lw.Header().Set("Content-Encoding", "gzip")
+	//}
 
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqJSON); err != nil {
@@ -476,9 +460,9 @@ func ValueHandler(w http.ResponseWriter, r *http.Request) {
 	//	return
 	//}
 
-	if getReqContEncoding(r) {
-		lw.Header().Set("Content-Encoding", "gzip")
-	}
+	//if checkReqContEncoding(r) {
+	//	lw.Header().Set("Content-Encoding", "gzip")
+	//}
 
 	dec := json.NewDecoder(r.Body)
 	if err = dec.Decode(&reqJSON); err != nil {
@@ -542,9 +526,9 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		responseData:   responseData,
 	}
 
-	if getReqContEncoding(r) {
-		lw.Header().Set("Content-Encoding", "gzip")
-	}
+	//if checkReqContEncoding(r) {
+	//	lw.Header().Set("Content-Encoding", "gzip")
+	//}
 
 	lw.Header().Set("Content-Type", "text/html")
 	lw.Header().Set("Date", time.Now().String())
