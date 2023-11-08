@@ -106,24 +106,6 @@ func UpdateMetric(reqJSON models.Metrics, repo storage.Storer) error {
 	return nil
 }
 
-// проверяем, что клиент готов принимать gzip данные
-func checkReqContEncoding(r *http.Request) bool {
-
-	encodingSlice := r.Header.Values("Accept-Encoding")
-	encodingsStr := strings.Join(encodingSlice, ",")
-	encodings := strings.Split(encodingsStr, ",")
-
-	log.Info().Str("encodingsStr", encodingsStr).Msg("checkReqContEncoding")
-
-	for _, el := range encodings {
-		if el == "gzip" {
-			return true
-		}
-	}
-
-	return false
-}
-
 func UpdateHandlerLong(w http.ResponseWriter, r *http.Request) {
 	var (
 		valCounter       storage.Counter
@@ -235,10 +217,6 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		responseData:   responseData,
 	}
 
-	//if checkReqContEncoding(r) {
-	//	lw.Header().Set("Content-Encoding", "gzip")
-	//}
-
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqJSON); err != nil {
 		lw.WriteHeaderStatus(http.StatusInternalServerError)
@@ -321,10 +299,6 @@ func UpdatesHandler(w http.ResponseWriter, r *http.Request) {
 		ResponseWriter: w, // встраиваем оригинальный http.ResponseWriter
 		responseData:   responseData,
 	}
-
-	//if checkReqContEncoding(r) {
-	//	lw.Header().Set("Content-Encoding", "gzip")
-	//}
 
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqJSON); err != nil {
@@ -453,17 +427,6 @@ func ValueHandler(w http.ResponseWriter, r *http.Request) {
 		responseData:   responseData,
 	}
 
-	//r.Body, err = reqCheckGzipBody(r)
-	//if err != nil {
-	//	lw.WriteHeaderStatus(http.StatusInternalServerError)
-	//	logHTTPResult(start, lw, *r, []models.Metrics{reqJSON}, []models.Metrics{resJSON}, err)
-	//	return
-	//}
-
-	//if checkReqContEncoding(r) {
-	//	lw.Header().Set("Content-Encoding", "gzip")
-	//}
-
 	dec := json.NewDecoder(r.Body)
 	if err = dec.Decode(&reqJSON); err != nil {
 		lw.WriteHeaderStatus(http.StatusInternalServerError)
@@ -525,10 +488,6 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		ResponseWriter: w, // встраиваем оригинальный http.ResponseWriter
 		responseData:   responseData,
 	}
-
-	//if checkReqContEncoding(r) {
-	//	lw.Header().Set("Content-Encoding", "gzip")
-	//}
 
 	lw.Header().Set("Content-Type", "text/html")
 	lw.Header().Set("Date", time.Now().String())

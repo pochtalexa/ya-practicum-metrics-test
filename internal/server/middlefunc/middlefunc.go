@@ -46,11 +46,6 @@ func GzipDecompression(next http.Handler) http.Handler {
 			defer gzipReader.Close()
 		}
 
-		//if handlers.CheckReqContEncoding(r) {
-		//	gzipWriter := gzip.NewWriter(w)
-		//	w = gzipWriter
-		//}
-
 		log.Info().Msg("GzipDecompression passed")
 
 		next.ServeHTTP(w, r)
