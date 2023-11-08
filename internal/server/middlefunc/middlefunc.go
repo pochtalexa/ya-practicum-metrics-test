@@ -47,10 +47,10 @@ func GzipDecompression(next http.Handler) http.Handler {
 		}
 
 		//w.Header().Set("Content-Type", http.DetectContentType(yourBody))
-		if getReqContEncoding(r) {
-			w.Header().Set("Content-Encoding", "gzip")
-			log.Info().Msg("set Content-Encoding gzip")
-		}
+		//if getReqContEncoding(r) {
+		//	w.Header().Set("Content-Encoding", "gzip")
+		//	log.Info().Msg("set Content-Encoding gzip")
+		//}
 
 		log.Info().Str("r.URL", r.URL.String()).Msg("GzipDecompression")
 		log.Info().Msg("GzipDecompression passed")

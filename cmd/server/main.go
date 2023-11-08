@@ -63,6 +63,7 @@ func run() error {
 
 	mux := chi.NewRouter()
 	mux.Use(middleware.Logger)
+	mux.Use(middleware.Recoverer)
 	mux.Use(middlefunc.GzipDecompression)
 	mux.Use(middleware.Compress(5, "gzip"))
 

@@ -125,20 +125,20 @@ func UpdateMetric(reqJSON models.Metrics, repo storage.Storer) error {
 }
 
 // проверяем, что клиент готов принимать gzip данные
-//func getReqContEncoding(r *http.Request) bool {
-//
-//	encodingSlice := r.Header.Values("Accept-Encoding")
-//	encodingsStr := strings.Join(encodingSlice, ",")
-//	encodings := strings.Split(encodingsStr, ",")
-//
-//	for _, el := range encodings {
-//		if el == "gzip" {
-//			return true
-//		}
-//	}
-//
-//	return false
-//}
+func getReqContEncoding(r *http.Request) bool {
+
+	encodingSlice := r.Header.Values("Accept-Encoding")
+	encodingsStr := strings.Join(encodingSlice, ",")
+	encodings := strings.Split(encodingsStr, ",")
+
+	for _, el := range encodings {
+		if el == "gzip" {
+			return true
+		}
+	}
+
+	return false
+}
 
 func UpdateHandlerLong(w http.ResponseWriter, r *http.Request) {
 	var (
@@ -251,9 +251,9 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		responseData:   responseData,
 	}
 
-	//if lw.resCompress = getReqContEncoding(r); lw.resCompress {
-	//	lw.Header().Set("Content-Encoding", "gzip")
-	//}
+	if getReqContEncoding(r) {
+		lw.Header().Set("Content-Encoding", "gzip")
+	}
 
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqJSON); err != nil {
@@ -338,9 +338,9 @@ func UpdatesHandler(w http.ResponseWriter, r *http.Request) {
 		responseData:   responseData,
 	}
 
-	//if lw.resCompress = getReqContEncoding(r); lw.resCompress {
-	//	lw.Header().Set("Content-Encoding", "gzip")
-	//}
+	if getReqContEncoding(r) {
+		lw.Header().Set("Content-Encoding", "gzip")
+	}
 
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&reqJSON); err != nil {
@@ -476,9 +476,9 @@ func ValueHandler(w http.ResponseWriter, r *http.Request) {
 	//	return
 	//}
 
-	//if lw.resCompress = getReqContEncoding(r); lw.resCompress {
-	//	lw.Header().Set("Content-Encoding", "gzip")
-	//}
+	if getReqContEncoding(r) {
+		lw.Header().Set("Content-Encoding", "gzip")
+	}
 
 	dec := json.NewDecoder(r.Body)
 	if err = dec.Decode(&reqJSON); err != nil {
@@ -542,9 +542,9 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		responseData:   responseData,
 	}
 
-	//if lw.resCompress = getReqContEncoding(r); lw.resCompress {
-	//	lw.Header().Set("Content-Encoding", "gzip")
-	//}
+	if getReqContEncoding(r) {
+		lw.Header().Set("Content-Encoding", "gzip")
+	}
 
 	lw.Header().Set("Content-Type", "text/html")
 	lw.Header().Set("Date", time.Now().String())
