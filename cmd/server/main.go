@@ -89,11 +89,11 @@ func run() error {
 	})
 
 	mux.Get("/value/{metricType}/{metricName}", handlers.ValueHandlerLong)
-	mux.Post("/value/", handlers.ValueHandler)
-	//mux.Route("/value", func(r chi.Router) {
-	//	r.Use(middlefunc.CheckReqBodySign)
-	//	r.Post("/", handlers.ValueHandler)
-	//})
+	//mux.Post("/value/", handlers.ValueHandler)
+	mux.Route("/value", func(r chi.Router) {
+		r.Use(middlefunc.CheckReqBodySign)
+		r.Post("/", handlers.ValueHandler)
+	})
 
 	log.Info().Str("Running on", flags.FlagRunAddr).Msg("Server started")
 	defer log.Info().Msg("Server stopped")
