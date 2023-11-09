@@ -7,11 +7,11 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/flags"
 	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
 	"strings"
+	"test.test/internal/server/flags"
 )
 
 // проверяем, что клиент отправил серверу сжатые данные в формате gzip
@@ -78,7 +78,8 @@ func checkSign(r *http.Request) (bool, error) {
 
 func CheckReqBodySign(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if flags.UseHashKey {
+		reqHeaderHash := r.Header.Get("HashSHA256")
+		if flags.UseHashKey && reqHeaderHash != "" {
 			if checkResult, err := checkSign(r); err != nil {
 				log.Info().Err(err).Msg("CheckReqBodySign error")
 
@@ -92,10 +93,7 @@ func CheckReqBodySign(next http.Handler) http.Handler {
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
-
-				body, _ := io.ReadAll(r.Body)
-				w.Write(body)
-				//io.Copy(w, r.Body)
+				io.Copy(w, r.Body)
 
 				return
 			}

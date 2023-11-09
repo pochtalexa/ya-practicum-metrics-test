@@ -6,11 +6,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v2"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/flags"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/handlers"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/middlefunc"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/migrations"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/storage"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"log/slog"
@@ -18,6 +13,11 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"test.test/internal/server/flags"
+	"test.test/internal/server/handlers"
+	"test.test/internal/server/middlefunc"
+	"test.test/internal/server/migrations"
+	"test.test/internal/server/storage"
 	"time"
 )
 

@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/agent/flags"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/agent/metrics"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/agent/models"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
 	"os"
 	"sync"
+	"test.test/internal/agent/flags"
+	"test.test/internal/agent/metrics"
+	"test.test/internal/agent/models"
 	"time"
 )
 

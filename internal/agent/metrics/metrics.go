@@ -2,12 +2,12 @@ package metrics
 
 import (
 	"fmt"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/agent/models"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/mem"
 	"math"
 	"math/rand"
 	"runtime"
+	"test.test/internal/agent/models"
 	"time"
 )
 

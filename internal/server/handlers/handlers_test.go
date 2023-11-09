@@ -7,10 +7,10 @@ import (
 	"errors"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/middlefunc"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
+	"test.test/internal/server/middlefunc"
 	"testing"
 )
 

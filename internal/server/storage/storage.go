@@ -1,9 +1,9 @@
 package storage
 
 import (
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/flags"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/models"
 	"github.com/rs/zerolog/log"
+	"test.test/internal/server/flags"
+	"test.test/internal/server/models"
 )
 
 type Gauge float64

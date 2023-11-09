@@ -1,6 +1,6 @@
 package storage
 
-import "github.com/pochtalexa/ya-practicum-metrics/internal/server/models"
+import "test.test/internal/server/models"
 
 type Storer interface {
 	GetGauge(name string) (Gauge, bool, error)

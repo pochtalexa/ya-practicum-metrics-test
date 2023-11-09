@@ -2,8 +2,8 @@ package migrations
 
 import (
 	"embed"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/storage"
 	"github.com/pressly/goose/v3"
+	"test.test/internal/server/storage"
 )
 
 //go:embed *.sql

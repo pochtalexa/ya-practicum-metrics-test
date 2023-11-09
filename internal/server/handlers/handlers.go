@@ -5,15 +5,15 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-chi/chi/v5"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/models"
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"strconv"
 	"strings"
+	"test.test/internal/server/models"
 	"time"
 
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/flags"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/storage"
+	"test.test/internal/server/flags"
+	"test.test/internal/server/storage"
 )
 
 // структура для хранения сведений об ответе

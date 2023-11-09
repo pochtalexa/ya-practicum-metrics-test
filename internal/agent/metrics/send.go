@@ -10,14 +10,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/agent/flags"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/agent/models"
 	"github.com/rs/zerolog/log"
 	"github.com/sethvargo/go-retry"
 	"net"
 	"net/http"
 	"strconv"
 	"strings"
+	"test.test/internal/agent/flags"
+	"test.test/internal/agent/models"
 	"time"
 )
 

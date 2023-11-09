@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/flags"
-	"github.com/pochtalexa/ya-practicum-metrics/internal/server/models"
 	"github.com/rs/zerolog/log"
 	"github.com/sethvargo/go-retry"
 	"strings"
+	"test.test/internal/server/flags"
+	"test.test/internal/server/models"
 	"time"
 )
 
