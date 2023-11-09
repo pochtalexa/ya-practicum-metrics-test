@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/httplog/v2"
+	//"github.com/go-chi/httplog/v2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -64,32 +63,32 @@ func restoreMetrics() error {
 
 func run() error {
 	// Logger
-	logger := httplog.NewLogger("httplog-chi", httplog.Options{
-		//JSON:             true,
-		LogLevel:         slog.LevelDebug,
-		Concise:          false,
-		RequestHeaders:   true,
-		ResponseHeaders:  true,
-		MessageFieldName: "msg",
-		// TimeFieldFormat: time.RFC850,
-		Tags: map[string]string{
-			"version": "v1.0",
-			"env":     "dev",
-		},
-		QuietDownRoutes: []string{
-			//"/",
-			"/ping",
-		},
-		QuietDownPeriod: 10 * time.Second,
-		// SourceFieldName: "source",
-	})
+	//logger := httplog.NewLogger("httplog-chi", httplog.Options{
+	//	//JSON:             true,
+	//	LogLevel:         slog.LevelDebug,
+	//	Concise:          false,
+	//	RequestHeaders:   true,
+	//	ResponseHeaders:  true,
+	//	MessageFieldName: "msg",
+	//	// TimeFieldFormat: time.RFC850,
+	//	Tags: map[string]string{
+	//		"version": "v1.0",
+	//		"env":     "dev",
+	//	},
+	//	QuietDownRoutes: []string{
+	//		//"/",
+	//		"/ping",
+	//	},
+	//	QuietDownPeriod: 10 * time.Second,
+	//	// SourceFieldName: "source",
+	//})
 
 	mux := chi.NewRouter()
 	mux.Use(middleware.RequestID)
 	mux.Use(middleware.Logger)
 	mux.Use(middleware.Recoverer)
 	mux.Use(middleware.URLFormat)
-	mux.Use(httplog.RequestLogger(logger))
+	//mux.Use(httplog.RequestLogger(logger))
 	mux.Use(middlefunc.GzipDecompression)
 	mux.Use(middleware.Compress(flate.DefaultCompression, "application/json", "text/html"))
 
