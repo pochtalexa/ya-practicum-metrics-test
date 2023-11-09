@@ -2,7 +2,6 @@ package flags
 
 import (
 	"flag"
-	"fmt"
 	"github.com/rs/zerolog/log"
 	"os"
 	"runtime"
@@ -43,9 +42,11 @@ func ParseFlags() {
 	if opSyst := runtime.GOOS; strings.Contains(opSyst, "windows") {
 		defaultFileStorePath = "c:/tmp/metrics-db.json"
 	}
+	//defaultFileStorePath := ""
 
-	defaultDBConn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		`localhost`, `5432`, `praktikum`, `praktikum`, `praktikum`)
+	//defaultDBConn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	//	`localhost`, `5432`, `praktikum`, `praktikum`, `praktikum`)
+	defaultDBConn := ""
 
 	//defaultHashKey := "0123456789ABCDEF"
 	defaultHashKey := ""

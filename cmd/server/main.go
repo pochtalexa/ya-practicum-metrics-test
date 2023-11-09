@@ -87,7 +87,7 @@ func run() error {
 	mux.Use(middleware.RequestID)
 	mux.Use(middleware.Logger)
 	mux.Use(middleware.Recoverer)
-	mux.Use(middleware.URLFormat)
+	//mux.Use(middleware.URLFormat)
 	//mux.Use(httplog.RequestLogger(logger))
 	mux.Use(middlefunc.GzipDecompression)
 	mux.Use(middleware.Compress(flate.DefaultCompression, "application/json", "text/html"))
