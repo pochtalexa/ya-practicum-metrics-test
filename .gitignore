@@ -11,6 +11,9 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# logs
+*.log
+
 # Binaries
 cmd/agent/main
 cmd/agent/agent
@@ -19,6 +22,7 @@ cmd/server/server
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+docker/
 
 # IDEs directories
 .idea

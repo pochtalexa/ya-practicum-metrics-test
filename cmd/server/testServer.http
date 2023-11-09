@@ -1,0 +1,83 @@
+###
+POST http://localhost:8080/update/counter/testCounter/100
+
+###
+POST http://localhost:8080/value/
+Content-Type: application/json
+
+{
+  "id": "nothing",
+  "type": "counter"
+}
+
+###
+POST http://localhost:8080/update/
+Content-Type: application/json
+
+{
+  "id": "aaa",
+  "type": "gauge",
+  "value": 111.111
+}
+###
+POST http://localhost:8080/update/
+Content-Type: application/json
+
+{
+  "id": "bbb",
+  "type": "gauge",
+  "value": 2.2
+}
+###
+POST http://localhost:8080/update/
+Content-Type: application/json
+
+{
+  "id": "ccc",
+  "type": "gauge",
+  "value": 333.333
+}
+###
+POST http://localhost:8080/value/
+Content-Type: application/json
+
+{
+  "id": "bbb",
+  "type": "gauge"
+}
+###
+POST http://localhost:8080/update/
+Content-Type: application/json
+
+{
+  "id": "aaa",
+  "type": "counter",
+  "delta": 1
+}
+###
+POST http://localhost:8080/value/
+Content-Type: application/json
+
+{
+  "id": "aaa",
+  "type": "counter"
+}
+###
+###
+POST http://localhost:8080/update/
+Content-Type: application/json
+
+{
+  "id": "bbb",
+  "type": "counter",
+  "delta": 1
+}
+###
+POST http://localhost:8080/value/
+Content-Type: application/json
+
+{
+  "id": "bbb",
+  "type": "counter"
+}
+###
